@@ -1,430 +1,209 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CelebrationModal from '../components/CelebrationModal.astro';
 ---
 
-<Layout title="VocabForge | Tempa Kosakata Baru dengan Gamifikasi" isFullWidth={true}>
-	<!-- Navigation Header -->
-	<header class="w-full bg-white border-b-4 border-brand-text py-4 px-6 md:px-12 sticky top-0 z-50">
-		<div class="max-w-6xl mx-auto flex justify-between items-center">
-			<a href="/" class="flex items-center gap-2 group">
-				<div class="h-10 w-10 bg-brand-primary border-2 border-brand-text rounded-lg flex items-center justify-center shadow-neo-sm group-hover:translate-x-[1px] group-hover:translate-y-[1px] group-hover:shadow-none transition-all">
-					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6.004 18 9m-3-3L9 12M15 6l-6 9m6-9-6 6M3 21h3l9-9-3-3-9 9v3Z"/></svg>
+<Layout title="VocabForge | Home">
+	<main class="flex-1 flex flex-col p-6 gap-8 animate-zoom-in">
+		<!-- Header -->
+		<header class="flex justify-between items-center">
+			<div class="flex flex-col">
+				<span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Selamat Menempa,</span>
+				<h1 class="text-3xl font-black uppercase tracking-tighter text-brand-secondary font-display">Forge Master</h1>
+			</div>
+			<div class="h-12 w-12 bg-white border-2 border-brand-outline rounded-2xl shadow-sm flex items-center justify-center text-brand-primary">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+			</div>
+		</header>
+
+		<!-- Top Section: Progress Bar -->
+		<section class="clay-card !p-5 flex flex-col gap-4 bg-white/80 backdrop-blur-sm">
+			<div class="flex justify-between items-end">
+				<div class="flex flex-col">
+					<span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Peringkat Saat Ini</span>
+					<h2 class="text-xl font-black text-brand-primary uppercase leading-none font-display" id="level-display">LEVEL 1</h2>
 				</div>
-				<span class="font-black text-2xl tracking-tighter uppercase text-brand-text">Vocab<span class="text-brand-primary">Forge</span></span>
+				<span class="font-black text-xs text-brand-secondary" id="xp-display">0 / 100 XP</span>
+			</div>
+			<div class="w-full h-6 bg-brand-bg border-2 border-brand-outline rounded-full overflow-hidden shadow-inner p-1">
+				<div 
+					id="progress-bar"
+					class="h-full bg-brand-success rounded-full transition-all duration-700 ease-out relative shadow-[0_0_10px_rgba(52,211,153,0.4)]" 
+					style="width: 0%"
+				>
+					<div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Stats Section: Grid -->
+		<section class="grid grid-cols-2 gap-4">
+			<div class="clay-card flex flex-col items-center justify-center text-center py-6 group hover:-translate-y-1 transition-all">
+				<div class="h-10 w-10 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary mb-2">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+				</div>
+				<span class="text-4xl font-black text-brand-primary font-display" id="total-words">0</span>
+				<span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mt-1">Total Kata</span>
+			</div>
+			<div class="clay-card flex flex-col items-center justify-center text-center py-6 group hover:-translate-y-1 transition-all">
+				<div class="h-10 w-10 rounded-xl bg-brand-accent/10 flex items-center justify-center text-brand-accent mb-2">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+				</div>
+				<span class="text-4xl font-black text-brand-accent font-display" id="total-badges">0</span>
+				<span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mt-1">Lencana</span>
+			</div>
+		</section>
+
+		<!-- Action Section: Add Button -->
+		<section>
+			<a href="/add" class="clay-btn-success w-full text-xl py-5 shadow-[0_6px_0_0_#059669] flex items-center justify-center gap-3">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+				<span class="font-display uppercase italic">Tempa Kosakata</span>
 			</a>
+		</section>
 
-			<a href="/dashboard" class="btn-3d text-sm py-2.5 px-5 !rounded-lg uppercase tracking-tight flex items-center gap-2">
-				Buka Aplikasi
-				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-			</a>
-		</div>
-	</header>
-
-	<!-- Hero Section -->
-	<section class="w-full bg-brand-bg py-16 px-6 md:px-12 border-b-4 border-brand-text relative overflow-hidden">
-		<!-- Decorative Background Grid -->
-		<div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: radial-gradient(var(--color-brand-text) 2px, transparent 2px); background-size: 24px 24px;"></div>
-
-		<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-			<!-- Hero Text Left -->
-			<div class="lg:col-span-7 flex flex-col gap-6">
-				<div class="inline-flex self-start items-center gap-2 px-3 py-1.5 bg-brand-success/15 border-2 border-brand-text rounded-full shadow-neo-sm">
-					<span class="h-2.5 w-2.5 bg-brand-success rounded-full animate-pulse"></span>
-					<span class="text-xs font-black uppercase text-brand-text tracking-wide">Aplikasi PWA Offline 100%</span>
-				</div>
-
-				<h1 class="text-4xl md:text-6xl font-black uppercase tracking-tight text-brand-text leading-[1.05]">
-					Tempa Kosakata,<br/>
-					<span class="text-brand-primary underline decoration-brand-success decoration-wavy decoration-2">Taklukkan Bahasa!</span>
-				</h1>
-
-				<p class="text-lg md:text-xl font-bold text-gray-600 leading-relaxed max-w-xl">
-					Catat kosakata baru secara instan, dapatkan XP, naikkan level menempa Anda, dan buka lencana legendaris. Tanpa akun, tanpa internet, 100% aman di HP Anda.
-				</p>
-
-				<div class="flex flex-col sm:flex-row gap-4 mt-2">
-					<a href="/dashboard" class="btn-3d text-lg md:text-xl py-4 px-8 uppercase tracking-wider text-center">
-						Mulai Menempa
-					</a>
-					<button id="install-btn" class="hidden relative inline-flex items-center justify-center px-8 py-4 font-black text-lg text-brand-text bg-white border-2 border-brand-text rounded-xl shadow-neo transition-all duration-75 active:translate-x-[2px] active:translate-y-[2px] active:shadow-neo-sm uppercase cursor-pointer hover:bg-yellow-50 gap-2">
-						<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-						Instal Aplikasi PWA
-					</button>
-				</div>
-			</div>
-
-			<!-- Live Mockup Right -->
-			<div class="lg:col-span-5 flex justify-center">
-				<div class="relative w-full max-w-[320px]">
-					<!-- 3D Accent Shadow -->
-					<div class="absolute inset-0 bg-brand-text rounded-[36px] translate-x-3 translate-y-3 shadow-neo"></div>
-					
-					<!-- Phone Frame Container -->
-					<div class="relative bg-white border-4 border-brand-text rounded-[32px] overflow-hidden flex flex-col h-[580px] shadow-2xl">
-						<!-- Phone Notch / Speaker -->
-						<div class="h-6 w-full bg-brand-text flex justify-center items-center">
-							<div class="w-16 h-2 bg-gray-600 rounded-full"></div>
-						</div>
-
-						<!-- Mockup Header -->
-						<div class="border-b-2 border-brand-text p-4 bg-brand-bg flex justify-between items-center">
-							<span class="font-black text-sm tracking-widest text-brand-primary">VOCABFORGE</span>
-							<span class="flex gap-1">
-								<span class="h-2 w-2 bg-brand-success rounded-full"></span>
-								<span class="h-2 w-2 bg-brand-primary rounded-full"></span>
-							</span>
-						</div>
-
-						<!-- Mockup Content (Dashboard Mode) -->
-						<div class="flex-1 p-4 bg-brand-bg flex flex-col gap-4 overflow-y-auto pointer-events-none">
-							<!-- Level Bar -->
-							<div class="flex flex-col gap-1">
-								<div class="flex justify-between items-end">
-									<h2 class="text-xs font-black text-brand-primary">LEVEL 3</h2>
-									<span class="font-black text-[9px]">40 / 100 XP</span>
-								</div>
-								<div class="w-full h-3 bg-white border border-brand-text rounded-full overflow-hidden shadow-neo-sm">
-									<div class="h-full bg-brand-success border-r border-brand-text" style="width: 40%"></div>
-								</div>
-							</div>
-
-							<!-- Stats -->
-							<div class="grid grid-cols-2 gap-2">
-								<div class="card-3d !p-2 flex flex-col items-center justify-center text-center shadow-neo-sm !rounded-xl">
-									<span class="text-lg font-black text-brand-primary">24</span>
-									<span class="text-[8px] font-bold uppercase tracking-wider text-gray-500">Words</span>
-								</div>
-								<div class="card-3d !p-2 flex flex-col items-center justify-center text-center shadow-neo-sm !rounded-xl">
-									<span class="text-lg font-black text-brand-primary">1</span>
-									<span class="text-[8px] font-bold uppercase tracking-wider text-gray-500">Badges</span>
-								</div>
-							</div>
-
-							<!-- Mockup Button -->
-							<div class="btn-3d w-full text-xs py-2 uppercase shadow-neo-sm !rounded-lg text-center">
-								+ Tambah Kosakata
-							</div>
-
-							<!-- Recent List -->
-							<div class="flex flex-col gap-2">
-								<span class="text-[9px] font-black uppercase">Terbaru</span>
-								
-								<!-- Word Card 1 -->
-								<div class="card-3d !p-2.5 flex justify-between items-center shadow-neo-sm !rounded-xl bg-white">
-									<div>
-										<p class="font-black text-xs leading-tight">Tempa</p>
-										<p class="text-brand-primary font-bold italic text-[9px]">Forge</p>
-									</div>
-									<div class="h-6 w-6 flex items-center justify-center rounded border border-brand-text bg-red-100">
-										<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-									</div>
-								</div>
-
-								<!-- Word Card 2 -->
-								<div class="card-3d !p-2.5 flex justify-between items-center shadow-neo-sm !rounded-xl bg-white">
-									<div>
-										<p class="font-black text-xs leading-tight">Buku</p>
-										<p class="text-brand-primary font-bold italic text-[9px]">Book</p>
-									</div>
-									<div class="h-6 w-6 flex items-center justify-center rounded border border-brand-text bg-red-100">
-										<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- Mockup Navigation -->
-						<div class="border-t-2 border-brand-text p-2.5 bg-white flex justify-around">
-							<span class="text-brand-primary flex flex-col items-center">
-								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-							</span>
-							<span class="text-gray-400 flex flex-col items-center">
-								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-							</span>
-						</div>
+		<!-- List Section: Recent Vocab -->
+		<section class="flex-1 flex flex-col gap-6">
+			<div class="flex flex-col gap-4 px-1">
+				<h3 class="font-black text-lg uppercase tracking-tighter text-brand-secondary font-display">Riwayat Tempaan</h3>
+				
+				<!-- Search/Filter Feature -->
+				<div class="relative w-full">
+					<input 
+						type="text" 
+						id="search-vocab" 
+						placeholder="Cari kata yang sudah ditempa..." 
+						class="clay-input !py-3 !px-12 !text-sm w-full bg-white/50 focus:bg-white transition-all"
+					/>
+					<div class="absolute left-4 top-1/2 -translate-y-1/2 text-brand-primary/40">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
 					</div>
 				</div>
 			</div>
-		</div>
-	</section>
-
-	<!-- Interactive Demo / Mini-Forge Section -->
-	<section class="w-full bg-white py-16 px-6 md:px-12 border-b-4 border-brand-text">
-		<div class="max-w-4xl mx-auto flex flex-col gap-10 items-center">
-			<div class="text-center flex flex-col gap-3">
-				<h2 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-brand-text">
-					Cobain <span class="text-brand-primary underline decoration-brand-success decoration-4">Simulasi Menempa</span> Sekarang!
-				</h2>
-				<p class="font-bold text-gray-500 text-sm md:text-base max-w-lg mx-auto">
-					Ketik kata apa saja untuk melihat proses gamifikasi berjalan secara interaktif sebelum Anda membukanya di aplikasi.
-				</p>
-			</div>
-
-			<!-- Mini-Forge Sandbox Card -->
-			<div class="w-full max-w-lg card-3d bg-brand-bg flex flex-col gap-6 relative">
-				<div class="absolute top-3 right-3 text-xs bg-brand-primary text-white border-2 border-brand-text px-2 py-0.5 rounded font-black uppercase tracking-widest shadow-neo-sm">
-					Demo Box
-				</div>
-
-				<!-- Top Part: Demo Progress -->
-				<div class="flex flex-col gap-1.5 mt-2">
-					<div class="flex justify-between items-end">
-						<h3 class="font-black text-base text-brand-primary uppercase" id="demo-level">LEVEL 1 (FORGER)</h3>
-						<span class="font-bold text-xs" id="demo-xp-text">0 / 100 XP</span>
+			
+			<div id="vocab-list" class="flex flex-col gap-4 pb-28">
+				<!-- Content populated by JS -->
+				<div class="clay-card !bg-transparent border-dashed !shadow-none py-12 flex flex-col items-center gap-4">
+					<div class="h-16 w-16 text-gray-200 animate-pulse">
+						<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 3"/><circle cx="12" cy="12" r="10"/></svg>
 					</div>
-					<div class="w-full h-5 bg-white border-2 border-brand-text rounded-full overflow-hidden shadow-neo-sm">
-						<div id="demo-progress-bar" class="h-full bg-brand-success border-r-2 border-brand-text transition-all duration-500" style="width: 0%"></div>
-					</div>
-				</div>
-
-				<!-- Form Input -->
-				<div class="flex flex-col gap-4 bg-white border-2 border-brand-text p-4 rounded-xl shadow-neo-sm">
-					<div class="flex flex-col gap-1">
-						<label class="text-[10px] font-black uppercase tracking-wider text-gray-500">Bahasa Indonesia</label>
-						<input type="text" id="demo-id" placeholder="Contoh: Apel" class="w-full px-3 py-2 border-2 border-brand-text rounded-lg font-bold text-sm focus:outline-none focus:bg-yellow-50/50" />
-					</div>
-					<div class="flex flex-col gap-1">
-						<label class="text-[10px] font-black uppercase tracking-wider text-gray-500">English Translation</label>
-						<input type="text" id="demo-en" placeholder="Example: Apple" class="w-full px-3 py-2 border-2 border-brand-text rounded-lg font-bold text-sm text-brand-primary focus:outline-none focus:bg-yellow-50/50" />
-					</div>
-					<button id="demo-submit-btn" class="btn-3d w-full py-2.5 text-sm uppercase tracking-wider">
-						Tempa Kata Baru (+10 XP)
-					</button>
-				</div>
-
-				<!-- Unlocked Badges list (Demo) -->
-				<div class="flex flex-col gap-2">
-					<h4 class="text-xs font-black uppercase tracking-wider">Lencana Demo Terbuka:</h4>
-					<div class="flex gap-2" id="demo-badges-container">
-						<div class="text-xs text-gray-400 font-bold italic py-1">Belum ada lencana terbuka... Tambahkan kata!</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- Features Grid Section -->
-	<section class="w-full bg-brand-bg py-20 px-6 md:px-12 border-b-4 border-brand-text">
-		<div class="max-w-6xl mx-auto flex flex-col gap-16">
-			<div class="text-center flex flex-col gap-3">
-				<h2 class="text-3xl md:text-5xl font-black uppercase tracking-tight text-brand-text">
-					Mengapa Menggunakan <span class="text-brand-primary">VocabForge</span>?
-				</h2>
-				<p class="font-bold text-gray-500 text-base md:text-lg max-w-xl mx-auto">
-					Menggabungkan teknik retensi memori aktif dengan pengalaman RPG gamifikasi yang menyenangkan.
-				</p>
-			</div>
-
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-				<!-- Card 1 -->
-				<div class="card-3d bg-white flex flex-col gap-4 group hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(31,41,55,1)] transition-all">
-					<div class="h-16 w-16 bg-blue-100 border-2 border-brand-text rounded-xl flex items-center justify-center shadow-neo-sm">
-						<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-brand-primary"><path d="M15.5 17h.01"/><path d="M8.5 17h.01"/><path d="M10 12h.01"/><path d="M14 12h.01"/><path d="M12 2v8"/><path d="M12 2L9 5"/><path d="M12 2l3 3"/><path d="M18 12a6 6 0 0 1-12 0v8h12v-8Z"/></svg>
-					</div>
-					<h3 class="text-xl font-black uppercase text-brand-text">Tempa Kata</h3>
-					<p class="text-sm font-bold text-gray-500 leading-relaxed">
-						Input kosakata baru beserta padanannya secara super instan dengan interaksi taktil 3D amblas yang memuaskan jari Anda.
-					</p>
-				</div>
-
-				<!-- Card 2 -->
-				<div class="card-3d bg-white flex flex-col gap-4 group hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(31,41,55,1)] transition-all">
-					<div class="h-16 w-16 bg-emerald-100 border-2 border-brand-text rounded-xl flex items-center justify-center shadow-neo-sm">
-						<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-brand-success"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-					</div>
-					<h3 class="text-xl font-black uppercase text-brand-text">RPG Gamifikasi</h3>
-					<p class="text-sm font-bold text-gray-500 leading-relaxed">
-						Naikkan Level Menempa seiring bertambahnya perolehan XP kosakata Anda. Buka lencana kehormatan eksklusif pada milestone tertentu!
-					</p>
-				</div>
-
-				<!-- Card 3 -->
-				<div class="card-3d bg-white flex flex-col gap-4 group hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(31,41,55,1)] transition-all">
-					<div class="h-16 w-16 bg-red-100 border-2 border-brand-text rounded-xl flex items-center justify-center shadow-neo-sm">
-						<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-					</div>
-					<h3 class="text-xl font-black uppercase text-brand-text">Aman & Offline</h3>
-					<p class="text-sm font-bold text-gray-500 leading-relaxed">
-						Seluruh data kosakata Anda tersimpan sepenuhnya di LocalStorage fisik perangkat Anda. Tidak ada server, zero registrasi, 100% privasi!
-					</p>
-				</div>
-
-				<!-- Card 4 -->
-				<div class="card-3d bg-white flex flex-col gap-4 group hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(31,41,55,1)] transition-all">
-					<div class="h-16 w-16 bg-yellow-100 border-2 border-brand-text rounded-xl flex items-center justify-center shadow-neo-sm">
-						<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-					</div>
-					<h3 class="text-xl font-black uppercase text-brand-text">Teknologi PWA</h3>
-					<p class="text-sm font-bold text-gray-500 leading-relaxed">
-						Instal aplikasi langsung ke HP/Desktop lewat browser dengan sekali klik. Ukuran sangat kecil (kurang dari 1MB) dan performa loading instan offline.
+					<p class="text-gray-400 font-bold italic text-center px-8 text-sm uppercase tracking-wider">
+						Dapur tempaan masih dingin...
 					</p>
 				</div>
 			</div>
-		</div>
-	</section>
+		</section>
+	</main>
 
-	<!-- Call to Action Banner -->
-	<section class="w-full bg-brand-primary text-white py-20 px-6 md:px-12 border-b-4 border-brand-text relative overflow-hidden">
-		<!-- Decorative circles -->
-		<div class="absolute -top-12 -left-12 h-48 w-48 bg-blue-900 border-4 border-brand-text rounded-full opacity-20"></div>
-		<div class="absolute -bottom-12 -right-12 h-64 w-64 bg-blue-900 border-4 border-brand-text rounded-full opacity-20"></div>
-
-		<div class="max-w-4xl mx-auto text-center flex flex-col gap-8 items-center relative z-10">
-			<h2 class="text-3xl md:text-5xl font-black uppercase tracking-tight text-white leading-tight">
-				Siap Menjadi Kolektor Kosakata Handal?
-			</h2>
-			<p class="text-lg md:text-xl font-bold text-blue-200 max-w-xl">
-				Buka aplikasi sekarang di perangkat Anda secara langsung lewat browser, atau pasang di Home Screen HP Anda untuk belajar lebih cepat kapan saja!
-			</p>
-			<div class="flex flex-col sm:flex-row gap-4">
-				<a href="/dashboard" class="relative inline-flex items-center justify-center px-10 py-5 font-black text-xl text-brand-text bg-brand-success border-4 border-brand-text rounded-2xl shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] transition-all duration-75 active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] uppercase">
-					Mulai Sekarang
-				</a>
+	<!-- Bottom Navigation -->
+	<nav class="fixed bottom-0 left-0 right-0 w-full bg-white/90 backdrop-blur-md border-t-2 border-brand-outline p-6 flex justify-around items-center z-40 max-w-[440px] mx-auto rounded-t-[32px] shadow-[0_-8px_20px_rgba(0,0,0,0.05)]">
+		<a href="/" class="flex flex-col items-center gap-2 group">
+			<div class="h-14 w-14 bg-brand-primary rounded-2xl shadow-[0_4px_0_0_#047857] flex items-center justify-center text-white transition-all active:translate-y-[2px] active:shadow-none">
+				<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
 			</div>
-		</div>
-	</section>
-
-	<!-- Footer -->
-	<footer class="w-full bg-white py-12 px-6 md:px-12 text-center border-b-0">
-		<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-			<div class="flex items-center gap-2">
-				<div class="h-8 w-8 bg-brand-primary border-2 border-brand-text rounded flex items-center justify-center shadow-neo-sm">
-					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6.004 18 9m-3-3L9 12M15 6l-6 9m6-9-6 6M3 21h3l9-9-3-3-9 9v3Z"/></svg>
-				</div>
-				<span class="font-black text-lg tracking-tighter uppercase text-brand-text">Vocab<span class="text-brand-primary">Forge</span></span>
+			<span class="text-[10px] font-black uppercase tracking-widest text-brand-primary">Home</span>
+		</a>
+		<a href="/badges" class="flex flex-col items-center gap-2 group">
+			<div class="h-14 w-14 bg-white border-2 border-brand-outline rounded-2xl shadow-sm flex items-center justify-center text-gray-300 transition-all hover:text-brand-accent hover:border-brand-accent/20 active:translate-y-[2px] active:shadow-none">
+				<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
 			</div>
-			<p class="font-bold text-gray-500 text-sm">
-				&copy; {new Date().getFullYear()} VocabForge. Dibuat dengan cinta, Astro JS, & PWA offline.
-			</p>
-		</div>
-	</footer>
-
-	<!-- Interactive Demo Script -->
-	<script>
-		// --- MINI FORGE DEMO CODE ---
-		let demoXp = 0;
-		let demoLevel = 1;
-		let demoWordCount = 0;
-
-		const demoIdInput = document.getElementById('demo-id') as HTMLInputElement;
-		const demoEnInput = document.getElementById('demo-en') as HTMLInputElement;
-		const demoSubmitBtn = document.getElementById('demo-submit-btn');
-		const demoLevelEl = document.getElementById('demo-level');
-		const demoXpText = document.getElementById('demo-xp-text');
-		const demoProgressBar = document.getElementById('demo-progress-bar');
-		const demoBadgesContainer = document.getElementById('demo-badges-container');
-
-		const milestones = [
-			{ count: 1, id: 'novice', name: 'Novice Smith', icon: '🛠️' },
-			{ count: 3, id: 'weaver', name: 'Word Weaver', icon: '📚' },
-			{ count: 5, id: 'voyager', name: 'Fluent Voyager', icon: '🧭' },
-		];
-
-		demoSubmitBtn?.addEventListener('click', () => {
-			const idVal = demoIdInput?.value.trim();
-			const enVal = demoEnInput?.value.trim();
-
-			if (!idVal || !enVal) {
-				alert('Harap isi kedua kata terlebih dahulu!');
-				return;
-			}
-
-			// Add XP
-			demoXp += 10;
-			demoWordCount += 1;
-
-			// Level up calculation (every 50 XP in demo for faster feedback)
-			if (demoXp >= 50) {
-				demoLevel += 1;
-				demoXp = demoXp - 50;
-				alert(`🎉 Selamat! Anda Naik Level ke LEVEL ${demoLevel} (Forger Magang) dalam demo!`);
-			}
-
-			// Reset input fields
-			if (demoIdInput) demoIdInput.value = '';
-			if (demoEnInput) demoEnInput.value = '';
-
-			// Update Progress UI
-			if (demoLevelEl) {
-				let title = 'FORGER';
-				if (demoLevel === 2) title = 'IRON SMITH';
-				if (demoLevel >= 3) title = 'VOCAB TITAN';
-				demoLevelEl.textContent = `LEVEL ${demoLevel} (${title})`;
-			}
-			if (demoXpText) {
-				demoXpText.textContent = `${demoXp} / 50 XP`;
-			}
-			if (demoProgressBar) {
-				const pct = (demoXp / 50) * 100;
-				demoProgressBar.style.width = `${pct}%`;
-			}
-
-			// Check Milestones
-			updateDemoBadges();
-
-			// Play dynamic success animation on container
-			const card = demoSubmitBtn.closest('.card-3d');
-			if (card) {
-				card.classList.add('scale-102', 'bg-emerald-50');
-				setTimeout(() => {
-					card.classList.remove('scale-102', 'bg-emerald-50');
-				}, 300);
-			}
-		});
-
-		function updateDemoBadges() {
-			if (!demoBadgesContainer) return;
-
-			const unlocked = milestones.filter(m => demoWordCount >= m.count);
-
-			if (unlocked.length === 0) {
-				demoBadgesContainer.innerHTML = `
-					<div class="text-xs text-gray-400 font-bold italic py-1">Belum ada lencana terbuka... Tambahkan kata!</div>
-				`;
-			} else {
-				demoBadgesContainer.innerHTML = unlocked.map(b => `
-					<div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border-2 border-brand-text rounded-lg shadow-neo-sm animate-zoom-in">
-						<span class="text-base">${b.icon}</span>
-						<span class="text-[10px] font-black uppercase text-brand-text">${b.name}</span>
-					</div>
-				`).join('');
-			}
-		}
-
-		// --- PWA INSTALLATION PROMPT CODE ---
-		let deferredPrompt: any = null;
-		const installBtn = document.getElementById('install-btn');
-
-		window.addEventListener('beforeinstallprompt', (e) => {
-			// Prevent the mini-infobar from appearing on mobile
-			e.preventDefault();
-			// Stash the event so it can be triggered later.
-			deferredPrompt = e;
-			// Update UI to show the install button
-			if (installBtn) {
-				installBtn.classList.remove('hidden');
-				installBtn.classList.add('inline-flex');
-			}
-		});
-
-		installBtn?.addEventListener('click', async () => {
-			if (deferredPrompt) {
-				// Show the install prompt
-				deferredPrompt.prompt();
-				// Wait for the user to respond to the prompt
-				const { outcome } = await deferredPrompt.userChoice;
-				console.log(`User response to install: ${outcome}`);
-				// We've used the prompt, and can't use it again
-				deferredPrompt = null;
-				// Hide the install button
-				installBtn.classList.add('hidden');
-			}
-		});
-
-		// Hide install button when app is installed successfully
-		window.addEventListener('appinstalled', (evt) => {
-			console.log('VocabForge berhasil terpasang di perangkat Anda!');
-			if (installBtn) installBtn.classList.add('hidden');
-		});
-	</script>
+			<span class="text-[10px] font-black uppercase tracking-widest text-gray-300">Badges</span>
+		</a>
+	</nav>
 </Layout>
+
+<script lang="ts">
+	import { getVocabData, getUserProfile, deleteVocabEntry } from '../utils/storage.js';
+
+	let currentVocab: any[] = [];
+	let searchQuery = '';
+
+	function renderVocabList(vocabToRender: any[]) {
+		const vocabList = document.getElementById('vocab-list');
+		if (!vocabList) return;
+
+		if (vocabToRender.length === 0) {
+			const emptyMsg = searchQuery 
+				? `Tidak ada hasil untuk "${searchQuery}"`
+				: 'Belum ada kata yang ditempa... Mulailah sekarang!';
+			
+			vocabList.innerHTML = `
+				<div class="clay-card !bg-transparent border-dashed !shadow-none py-12 flex flex-col items-center gap-4">
+					<div class="h-16 w-16 text-gray-200">
+						<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+					</div>
+					<p class="text-gray-400 font-bold italic text-center px-8 text-sm">
+						${emptyMsg}
+					</p>
+				</div>
+			`;
+		} else {
+			vocabList.innerHTML = vocabToRender.map(word => `
+				<div class="clay-card !p-5 flex justify-between items-center group relative overflow-hidden animate-slide-up" data-id="${word.id}">
+					<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-brand-primary/20"></div>
+					<div class="pl-2">
+						<p class="font-black text-xl uppercase tracking-tighter leading-tight text-brand-secondary font-display">${word.word_id}</p>
+						<p class="text-brand-primary font-bold italic text-xs mt-0.5">${word.word_en}</p>
+					</div>
+					<button class="delete-btn h-10 w-10 flex items-center justify-center rounded-xl border-2 border-brand-outline bg-white hover:bg-red-50 hover:border-red-500 transition-all cursor-pointer shadow-sm active:translate-y-[1px] active:shadow-none" data-id="${word.id}">
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+					</button>
+				</div>
+			`).join('');
+
+			// Add delete listeners
+			document.querySelectorAll('.delete-btn').forEach(btn => {
+				btn.addEventListener('click', (e) => {
+					const id = (e.currentTarget as HTMLElement).dataset.id;
+					if (id && confirm('Hapus kata ini dari koleksi tempaan Anda?')) {
+						deleteVocabEntry(id);
+						init(); // Re-render
+					}
+				});
+			});
+		}
+	}
+
+	function init() {
+		const profile = getUserProfile();
+		currentVocab = getVocabData();
+
+		// Update Profile UI
+		const levelDisplay = document.getElementById('level-display');
+		const xpDisplay = document.getElementById('xp-display');
+		const progressBar = document.getElementById('progress-bar');
+		const totalWordsDisplay = document.getElementById('total-words');
+		const totalBadgesDisplay = document.getElementById('total-badges');
+
+		if (levelDisplay) {
+			let title = 'IRON FORGER';
+			if (profile.level >= 5) title = 'STEEL SMITH';
+			if (profile.level >= 10) title = 'VOCAB TITAN';
+			levelDisplay.textContent = `LVL ${profile.level} - ${title}`;
+		}
+		if (xpDisplay) xpDisplay.textContent = `${profile.current_xp} / 100 XP`;
+		if (progressBar) progressBar.style.width = `${profile.current_xp}%`;
+		if (totalWordsDisplay) totalWordsDisplay.textContent = currentVocab.length.toString();
+		if (totalBadgesDisplay) totalBadgesDisplay.textContent = profile.unlocked_badges.length.toString();
+
+		// Initial render
+		filterAndRender();
+	}
+
+	function filterAndRender() {
+		const filtered = currentVocab.filter(word => 
+			word.word_id.toLowerCase().includes(searchQuery.toLowerCase()) || 
+			word.word_en.toLowerCase().includes(searchQuery.toLowerCase())
+		);
+		renderVocabList(filtered);
+	}
+
+	// Search listener
+	document.getElementById('search-vocab')?.addEventListener('input', (e) => {
+		searchQuery = (e.target as HTMLInputElement).value;
+		filterAndRender();
+	});
+
+	// Initialize UI
+	init();
+</script>
