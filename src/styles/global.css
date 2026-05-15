@@ -1,13 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-bg: #F3F4F6;
-  --color-brand-primary: #1E3A8A;
-  --color-brand-success: #34D399;
-  --color-brand-text: #1F2937;
+  --color-brand-bg: #F8FAFC;
+  --color-brand-primary: #10B981;
+  --color-brand-secondary: #1E293B;
+  --color-brand-success: #10B981;
+  --color-brand-warning: #F59E0B;
+  --color-brand-accent: #FFD600;
+  --color-brand-text: #1E293B;
+  --color-brand-outline: #E2E8F0;
   
-  --shadow-neo: 4px 4px 0px 0px rgba(31, 41, 55, 1);
-  --shadow-neo-sm: 2px 2px 0px 0px rgba(31, 41, 55, 1);
+  --shadow-neo: 0 4px 0 0 #dde4dd;
+  --shadow-neo-sm: 0 2px 0 0 #dde4dd;
+  --shadow-neo-lg: 0 8px 0 0 #dde4dd;
+  
+  --radius-neo: 16px;
 }
 
 @keyframes zoom-in {
@@ -21,23 +28,70 @@
   }
 }
 
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
 .animate-zoom-in {
-  animation: zoom-in 0.3s ease-out forwards;
+  animation: zoom-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
 @layer base {
   body {
-    @apply bg-brand-bg text-brand-text;
-    font-family: 'Inter', sans-serif;
+    @apply bg-brand-bg text-brand-text antialiased;
+    font-family: 'Nunito Sans', sans-serif;
+  }
+  
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Quicksand', sans-serif;
   }
 }
 
 @layer components {
-  .btn-3d {
-    @apply relative inline-flex items-center justify-center px-6 py-3 font-bold text-white bg-brand-primary border-2 border-brand-text rounded-xl shadow-neo transition-all duration-75 active:translate-x-[2px] active:translate-y-[2px] active:shadow-neo-sm;
+  /* Shared Base Styles */
+  .clay-btn, .clay-btn-success, .clay-btn-accent, .btn-3d, .btn-3d-success, .btn-3d-accent {
+    @apply relative inline-flex items-center justify-center px-6 py-4 font-black border-2 border-brand-secondary/10 rounded-xl transition-all duration-100 active:translate-y-[4px] active:shadow-none uppercase tracking-tight cursor-pointer select-none;
+  }
+
+  /* Specific Variants */
+  .clay-btn, .btn-3d {
+    @apply bg-brand-primary text-white shadow-[0_4px_0_0_#047857];
   }
   
-  .card-3d {
-    @apply bg-white border-2 border-brand-text rounded-2xl p-6 shadow-neo;
+  .clay-btn-success, .btn-3d-success {
+    @apply bg-brand-success text-white shadow-[0_4px_0_0_#059669];
+  }
+  
+  .clay-btn-accent, .btn-3d-accent {
+    @apply bg-brand-accent text-brand-text shadow-[0_4px_0_0_#CA8A04];
+  }
+
+  .clay-card, .card-3d {
+    @apply bg-white border-2 border-brand-outline rounded-2xl p-6 shadow-[0_4px_0_0_#dde4dd] transition-all duration-200;
+  }
+
+  .clay-input, .input-neo {
+    @apply w-full p-4 bg-white border-2 border-brand-outline rounded-2xl shadow-inner focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all font-bold text-lg;
   }
 }
+
