@@ -17,8 +17,36 @@ const DEFAULT_PROFILE = {
  */
 export const getVocabData = () => {
   if (typeof window === 'undefined') return [];
-  const data = localStorage.getItem(STORAGE_KEYS.VOCAB);
-  return data ? JSON.parse(data) : [];
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.VOCAB);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    console.error('Failed to parse vocab data', e);
+    return [];
+  }
+};
+
+/**
+ * Get user profile data
+ */
+export const getUserProfile = () => {
+  const clone = () => JSON.parse(JSON.stringify(DEFAULT_PROFILE));
+  if (typeof window === 'undefined') return clone();
+  try {
+    const profile = localStorage.getItem(STORAGE_KEYS.PROFILE);
+    return profile ? JSON.parse(profile) : clone();
+  } catch (e) {
+    console.error('Failed to parse profile data', e);
+    return clone();
+  }
+};
+
+/**
+ * Save user profile data
+ */
+const saveProfile = (profile) => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(profile));
 };
 
 /**
@@ -53,22 +81,17 @@ export const deleteVocabEntry = (id) => {
 };
 
 /**
- * Get user profile data
- */
-export const getUserProfile = () => {
-  if (typeof window === 'undefined') return DEFAULT_PROFILE;
-  const profile = localStorage.getItem(STORAGE_KEYS.PROFILE);
-  return profile ? JSON.parse(profile) : DEFAULT_PROFILE;
-};
-
-/**
  * Add a pending celebration
  */
 const addPendingCelebration = (type, data) => {
   if (typeof window === 'undefined') return;
-  const pending = JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING) || '[]');
-  pending.push({ type, data });
-  localStorage.setItem(STORAGE_KEYS.PENDING, JSON.stringify(pending));
+  try {
+    const pending = JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING) || '[]');
+    pending.push({ type, data });
+    localStorage.setItem(STORAGE_KEYS.PENDING, JSON.stringify(pending));
+  } catch (e) {
+    localStorage.setItem(STORAGE_KEYS.PENDING, JSON.stringify([{ type, data }]));
+  }
 };
 
 /**
@@ -76,9 +99,13 @@ const addPendingCelebration = (type, data) => {
  */
 export const popPendingCelebrations = () => {
   if (typeof window === 'undefined') return [];
-  const pending = JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING) || '[]');
-  localStorage.removeItem(STORAGE_KEYS.PENDING);
-  return pending;
+  try {
+    const pending = JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING) || '[]');
+    localStorage.removeItem(STORAGE_KEYS.PENDING);
+    return pending;
+  } catch (e) {
+    return [];
+  }
 };
 
 /**
@@ -90,31 +117,22 @@ export const updateXP = (amount) => {
   
   current_xp += amount;
   
+  let leveledUp = false;
   // Leveling logic: 100 XP per level
   while (current_xp >= 100) {
     current_xp -= 100;
     level += 1;
+    leveledUp = true;
     addPendingCelebration('level-up', { level });
     window.dispatchEvent(new CustomEvent('level-up', { detail: { level } }));
   }
   
-  const updatedProfile = { current_xp, level, unlocked_badges };
-  localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(updatedProfile));
+  profile.current_xp = current_xp;
+  profile.level = level;
   
   // Check for badges
-  checkBadges();
-  
-  return updatedProfile;
-};
-
-/**
- * Check and unlock badges based on total words
- */
-const checkBadges = () => {
   const vocab = getVocabData();
-  const profile = getUserProfile();
   const count = vocab.length;
-  const { unlocked_badges } = profile;
   
   const milestones = [
     { id: 'badge_01', target: 10 },
@@ -123,17 +141,16 @@ const checkBadges = () => {
     { id: 'badge_04', target: 100 }
   ];
   
-  let newlyUnlocked = false;
   milestones.forEach(m => {
     if (count >= m.target && !unlocked_badges.includes(m.id)) {
       unlocked_badges.push(m.id);
-      newlyUnlocked = true;
       addPendingCelebration('badge-unlocked', { badgeId: m.id });
       window.dispatchEvent(new CustomEvent('badge-unlocked', { detail: { badgeId: m.id } }));
     }
   });
   
-  if (newlyUnlocked) {
-    localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify({ ...profile, unlocked_badges }));
-  }
+  profile.unlocked_badges = unlocked_badges;
+  saveProfile(profile);
+  
+  return profile;
 };
