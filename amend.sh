@@ -22,9 +22,10 @@ git status --short
 echo ""
 
 COUNT=0
-START_DAY=6
-END_DAY=31
-CURRENT_DAY=$START_DAY
+# Use explicit start/end dates so the range can span months
+START_DATE="2026-05-20"
+END_DATE="2026-06-03"
+CURRENT_DATE="$START_DATE"
 
 # ── Detect commit type from filename / path ──────────────────────────────────
 get_type() {
@@ -94,17 +95,21 @@ while IFS= read -r line; do
             ;;
     esac
 
-    # Format day with leading zero and keep date in range 2026-05-06..2026-05-31
-    FORMATTED_DAY=$(printf "%02d" $CURRENT_DAY)
-    COMMIT_DATE="2026-05-$FORMATTED_DAY 10:00:00"
-    
+    # Set commit date from CURRENT_DATE
+    COMMIT_DATE="$CURRENT_DATE 10:00:00"
+
     echo " amending date → $COMMIT_DATE"
     git commit --amend --no-edit --date="$COMMIT_DATE" > /dev/null
 
-    # Increment day and loop back to start when reaching the range end
-    CURRENT_DAY=$((CURRENT_DAY + 1))
-    if [ "$CURRENT_DAY" -gt "$END_DAY" ]; then
-        CURRENT_DAY=$START_DAY
+    # Increment CURRENT_DATE by one day (requires GNU date). If past END_DATE, wrap to START_DATE
+    if command -v date >/dev/null 2>&1; then
+        CURRENT_DATE=$(date -I -d "$CURRENT_DATE + 1 day")
+        if [ "$(date -d "$CURRENT_DATE" +%s)" -gt "$(date -d "$END_DATE" +%s)" ]; then
+            CURRENT_DATE="$START_DATE"
+        fi
+    else
+        # Fallback: if `date -d` not available, reset to START_DATE (safe default)
+        CURRENT_DATE="$START_DATE"
     fi
 
     COUNT=$((COUNT + 1))
