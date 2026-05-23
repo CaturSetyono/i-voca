@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="VocabForge | Tambah Kosakata">
+	<main class="flex-1 flex flex-col p-6 gap-8">
+		<header class="flex items-center gap-4">
+			<a href="/dashboard" class="h-12 w-12 flex items-center justify-center rounded-xl border-2 border-brand-text bg-white shadow-neo-sm active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+			</a>
+			<h1 class="text-2xl font-black uppercase">Tambah Kata</h1>
+		</header>
+
+		<form id="vocab-form" class="flex flex-col gap-6">
+			<div class="flex flex-col gap-2">
+				<label for="word_id" class="font-black uppercase text-sm tracking-wider">Bahasa Indonesia</label>
+				<input 
+					type="text" 
+					id="word_id" 
+					name="word_id" 
+					required
+					placeholder="Contoh: Buku"
+					class="w-full p-4 bg-white border-4 border-brand-text rounded-2xl shadow-neo focus:outline-none focus:ring-0 focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-neo-sm transition-all font-bold text-lg"
+				/>
+			</div>
+
+			<div class="flex flex-col gap-2">
+				<label for="word_en" class="font-black uppercase text-sm tracking-wider">English Translation</label>
+				<input 
+					type="text" 
+					id="word_en" 
+					name="word_en" 
+					required
+					placeholder="Example: Book"
+					class="w-full p-4 bg-white border-4 border-brand-text rounded-2xl shadow-neo focus:outline-none focus:ring-0 focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-neo-sm transition-all font-bold text-lg text-brand-primary"
+				/>
+			</div>
+
+			<div class="mt-4">
+				<button type="submit" class="btn-3d w-full py-5 text-xl uppercase tracking-wider">
+					Simpan & Tempa (+10 XP)
+				</button>
+			</div>
+		</form>
+	</main>
+</Layout>
+
+<script>
+	import { addVocabEntry } from '../utils/storage.js';
+
+	const form = document.getElementById('vocab-form') as HTMLFormElement;
+
+	form?.addEventListener('submit', (e) => {
+		e.preventDefault();
+		const formData = new FormData(form);
+		const wordId = formData.get('word_id') as string;
+		const wordEn = formData.get('word_en') as string;
+
+		if (wordId && wordEn) {
+			addVocabEntry(wordId, wordEn);
+			// Redirect back to home after saving
+			window.location.href = '/dashboard';
+		}
+	});
+</script>

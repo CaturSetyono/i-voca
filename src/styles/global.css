@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-bg: #F3F4F6;
+  --color-brand-primary: #1E3A8A;
+  --color-brand-success: #34D399;
+  --color-brand-text: #1F2937;
+  
+  --shadow-neo: 4px 4px 0px 0px rgba(31, 41, 55, 1);
+  --shadow-neo-sm: 2px 2px 0px 0px rgba(31, 41, 55, 1);
+}
+
+@keyframes zoom-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-zoom-in {
+  animation: zoom-in 0.3s ease-out forwards;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-text;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .btn-3d {
+    @apply relative inline-flex items-center justify-center px-6 py-3 font-bold text-white bg-brand-primary border-2 border-brand-text rounded-xl shadow-neo transition-all duration-75 active:translate-x-[2px] active:translate-y-[2px] active:shadow-neo-sm;
+  }
+  
+  .card-3d {
+    @apply bg-white border-2 border-brand-text rounded-2xl p-6 shadow-neo;
+  }
+}

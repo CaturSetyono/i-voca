@@ -1,0 +1,118 @@
+---
+---
+
+<div id="celebration-modal" class="fixed inset-0 z-50 flex items-center justify-center p-6 hidden">
+	<!-- Backdrop -->
+	<div class="absolute inset-0 bg-brand-text/60 backdrop-blur-sm"></div>
+	
+	<!-- Modal Content -->
+	<div class="relative w-full max-w-sm card-3d bg-white flex flex-col items-center text-center gap-6 animate-zoom-in">
+		<div id="modal-icon-container" class="h-32 w-32 flex items-center justify-center rounded-3xl border-4 border-brand-text bg-brand-bg shadow-neo relative overflow-hidden">
+			<img id="modal-badge-icon" src="" alt="Badge" class="w-20 h-20 hidden" />
+			<div id="modal-level-icon" class="text-6xl font-black text-brand-primary hidden">1</div>
+		</div>
+
+		<div class="flex flex-col gap-2">
+			<h2 id="modal-title" class="text-3xl font-black uppercase tracking-tighter leading-none">SELAMAT!</h2>
+			<p id="modal-message" class="font-bold text-brand-primary uppercase text-sm tracking-widest">Kamu naik level!</p>
+		</div>
+
+		<div id="modal-badge-info" class="hidden flex flex-col gap-1">
+			<h3 id="modal-badge-name" class="font-black text-xl leading-tight">Novice Smith</h3>
+			<p id="modal-badge-desc" class="text-sm font-medium italic">Menandakan pengguna mulai menempa fondasi bahasanya.</p>
+		</div>
+
+		<button id="close-modal" class="btn-3d w-full py-4 text-xl uppercase tracking-tighter">
+			Mantap!
+		</button>
+	</div>
+</div>
+
+<script>
+	const modal = document.getElementById('celebration-modal');
+	const modalTitle = document.getElementById('modal-title');
+	const modalMessage = document.getElementById('modal-message');
+	const modalBadgeInfo = document.getElementById('modal-badge-info');
+	const modalBadgeName = document.getElementById('modal-badge-name');
+	const modalBadgeDesc = document.getElementById('modal-badge-desc');
+	const modalBadgeIcon = document.getElementById('modal-badge-icon') as HTMLImageElement;
+	const modalLevelIcon = document.getElementById('modal-level-icon');
+	const closeModal = document.getElementById('close-modal');
+
+	const badges = {
+		badge_01: { name: 'Novice Smith', desc: 'Menandakan pengguna mulai menempa fondasi bahasanya.', icon: '/assets/badges/badge_01.svg' },
+		badge_02: { name: 'Word Weaver', desc: 'Pengguna mulai bisa merajut kata-kata dasar.', icon: '/assets/badges/badge_02.svg' },
+		badge_03: { name: 'Fluent Voyager', desc: 'Pengguna siap berlayar lebih jauh ke percakapan kasual.', icon: '/assets/badges/badge_03.svg' },
+		badge_04: { name: 'Vocab Titan', desc: 'Pengguna memiliki kekuatan memori kosakata yang besar.', icon: '/assets/badges/badge_04.svg' }
+	};
+
+	function showModal() {
+		modal?.classList.remove('hidden');
+	}
+
+	function hideModal() {
+		modal?.classList.add('hidden');
+	}
+
+	closeModal?.addEventListener('click', () => {
+		hideModal();
+		checkPending(); // Check for next one
+	});
+
+	function triggerCelebration(type: string, data: any) {
+		if (type === 'level-up') {
+			const level = data.level;
+			if (modalTitle) modalTitle.textContent = 'NAIK LEVEL!';
+			if (modalMessage) modalMessage.textContent = `Kamu sekarang level ${level}`;
+			if (modalLevelIcon) {
+				modalLevelIcon.textContent = level.toString();
+				modalLevelIcon.classList.remove('hidden');
+			}
+			modalBadgeIcon?.classList.add('hidden');
+			modalBadgeInfo?.classList.add('hidden');
+			showModal();
+		} else if (type === 'badge-unlocked') {
+			const badgeId = data.badgeId;
+			const badge = (badges as any)[badgeId];
+			
+			if (badge) {
+				if (modalTitle) modalTitle.textContent = 'BADGE BARU!';
+				if (modalMessage) modalMessage.textContent = 'Kamu membuka pencapaian baru';
+				if (modalBadgeName) modalBadgeName.textContent = badge.name;
+				if (modalBadgeDesc) modalBadgeDesc.textContent = badge.desc;
+				if (modalBadgeIcon) {
+					modalBadgeIcon.src = badge.icon;
+					modalBadgeIcon.classList.remove('hidden');
+				}
+				modalLevelIcon?.classList.add('hidden');
+				modalBadgeInfo?.classList.remove('hidden');
+				showModal();
+			}
+		}
+	}
+
+	window.addEventListener('level-up', (e: any) => {
+		triggerCelebration('level-up', e.detail);
+	});
+
+	window.addEventListener('badge-unlocked', (e: any) => {
+		triggerCelebration('badge-unlocked', e.detail);
+	});
+
+	// Check pending on load
+	import { popPendingCelebrations } from '../utils/storage.js';
+	let pendingCelebrations: any[] = [];
+
+	function checkPending() {
+		if (pendingCelebrations.length > 0) {
+			const celebration = pendingCelebrations.shift();
+			triggerCelebration(celebration.type, celebration.data);
+		}
+	}
+
+	// Wait a bit before checking pending to let page settle
+	setTimeout(() => {
+		pendingCelebrations = popPendingCelebrations();
+		checkPending();
+	}, 500);
+</script>

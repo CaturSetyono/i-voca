@@ -1,0 +1,83 @@
+---
+import '../styles/global.css';
+import CelebrationModal from '../components/CelebrationModal.astro';
+import { pwaInfo } from 'virtual:pwa-info';
+
+interface Props {
+	title?: string;
+	isFullWidth?: boolean;
+}
+
+const { title = "VocabForge", isFullWidth = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+		{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} /> }
+		<script>
+			import { registerSW } from 'virtual:pwa-register';
+			registerSW({
+				onNeedRefresh() {
+					if (confirm('Aplikasi diperbarui. Refresh sekarang?')) {
+						location.reload();
+					}
+				},
+				onOfflineReady() {
+					console.log('Aplikasi siap digunakan secara offline.');
+				},
+			});
+		</script>
+	</head>
+	<body class={isFullWidth ? "bg-brand-bg min-h-screen" : "bg-brand-bg min-h-screen flex justify-center"}>
+		{isFullWidth ? (
+			<slot />
+		) : (
+			<!-- Mobile Frame Container -->
+			<div class="w-full max-w-md min-h-screen bg-brand-bg relative flex flex-col border-x-0 md:border-x-4 border-brand-text shadow-2xl animate-zoom-in">
+				<slot />
+			</div>
+		)}
+		{!isFullWidth && <CelebrationModal />}
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--brand-bg: #F3F4F6;
+		--brand-primary: #1E3A8A;
+		--brand-success: #34D399;
+		--brand-text: #1F2937;
+	}
+
+	html,
+	body {
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		height: 100%;
+		overflow-x: hidden;
+	}
+
+	/* Custom Scrollbar for Neo-Brutalism feel */
+	::-webkit-scrollbar {
+		width: 8px;
+	}
+	::-webkit-scrollbar-track {
+		background: var(--brand-bg);
+	}
+	::-webkit-scrollbar-thumb {
+		background: var(--brand-primary);
+		border: 2px solid var(--brand-text);
+		border-radius: 4px;
+	}
+</style>

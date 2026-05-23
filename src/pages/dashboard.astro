@@ -1,0 +1,124 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="VocabForge | Dashboard">
+	<main class="flex-1 flex flex-col p-6 gap-8 animate-zoom-in">
+		<!-- Top Section: Progress Bar -->
+		<section class="flex flex-col gap-2">
+			<div class="flex justify-between items-end">
+				<h2 class="text-2xl font-black text-brand-primary" id="level-display">LEVEL 1</h2>
+				<span class="font-bold text-sm" id="xp-display">0 / 100 XP</span>
+			</div>
+			<div class="w-full h-6 bg-white border-2 border-brand-text rounded-full overflow-hidden shadow-neo-sm">
+				<div 
+					id="progress-bar"
+					class="h-full bg-brand-success border-r-2 border-brand-text transition-all duration-500" 
+					style="width: 0%"
+				></div>
+			</div>
+		</section>
+
+		<!-- Stats Section: Grid 3D -->
+		<section class="grid grid-cols-2 gap-4">
+			<div class="card-3d flex flex-col items-center justify-center text-center py-4">
+				<span class="text-3xl font-black text-brand-primary" id="total-words">0</span>
+				<span class="text-xs font-bold uppercase tracking-wider">Words</span>
+			</div>
+			<div class="card-3d flex flex-col items-center justify-center text-center py-4">
+				<span class="text-3xl font-black text-brand-primary" id="total-badges">0</span>
+				<span class="text-xs font-bold uppercase tracking-wider">Badges</span>
+			</div>
+		</section>
+
+		<!-- Action Section: Add Button -->
+		<section>
+			<a href="/add" class="btn-3d w-full text-xl py-4 uppercase tracking-tighter text-center">
+				Tambah Kosakata
+			</a>
+		</section>
+
+		<!-- List Section: Recent Vocab -->
+		<section class="flex-1 flex flex-col gap-4">
+			<h3 class="font-black text-lg uppercase">Terbaru</h3>
+			<div id="vocab-list" class="flex flex-col gap-3 pb-4">
+				<!-- Content populated by JS -->
+				<div class="text-center py-8 text-gray-400 font-bold italic">
+					Belum ada kata yang ditempa...
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<!-- Bottom Navigation -->
+	<nav class="sticky bottom-0 w-full bg-white border-t-4 border-brand-text p-4 flex justify-around">
+		<a href="/dashboard" class="font-black text-brand-primary flex flex-col items-center gap-1">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+			<span class="text-[10px] uppercase">Home</span>
+		</a>
+		<a href="/badges" class="font-black text-gray-400 flex flex-col items-center gap-1">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+			<span class="text-[10px] uppercase">Badges</span>
+		</a>
+	</nav>
+</Layout>
+
+<script>
+	import { getVocabData, getUserProfile, deleteVocabEntry } from '../utils/storage.js';
+
+	function init() {
+		const profile = getUserProfile();
+		const vocab = getVocabData();
+
+		// Update Profile UI
+		const levelDisplay = document.getElementById('level-display');
+		const xpDisplay = document.getElementById('xp-display');
+		const progressBar = document.getElementById('progress-bar');
+		const totalWordsDisplay = document.getElementById('total-words');
+		const totalBadgesDisplay = document.getElementById('total-badges');
+
+		if (levelDisplay) levelDisplay.textContent = `LEVEL ${profile.level}`;
+		if (xpDisplay) xpDisplay.textContent = `${profile.current_xp} / 100 XP`;
+		if (progressBar) progressBar.style.width = `${profile.current_xp}%`;
+		if (totalWordsDisplay) totalWordsDisplay.textContent = vocab.length.toString();
+		if (totalBadgesDisplay) totalBadgesDisplay.textContent = profile.unlocked_badges.length.toString();
+
+		// Update Vocab List
+		const vocabList = document.getElementById('vocab-list');
+		if (vocabList) {
+			if (vocab.length === 0) {
+				vocabList.innerHTML = `
+					<div class="text-center py-8 text-gray-400 font-bold italic">
+						Belum ada kata yang ditempa...
+					</div>
+				`;
+			} else {
+				vocabList.innerHTML = vocab.map(word => `
+					<div class="card-3d !p-4 flex justify-between items-center group" data-id="${word.id}">
+						<div>
+							<p class="font-black text-lg leading-tight">${word.word_id}</p>
+							<p class="text-brand-primary font-bold italic">${word.word_en}</p>
+						</div>
+						<button class="delete-btn h-10 w-10 flex items-center justify-center rounded-lg border-2 border-brand-text bg-brand-bg hover:bg-red-100 transition-colors cursor-pointer" data-id="${word.id}">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+						</button>
+					</div>
+				`).join('');
+
+				// Add delete listeners
+				document.querySelectorAll('.delete-btn').forEach(btn => {
+					btn.addEventListener('click', (e) => {
+						const id = (e.currentTarget as HTMLElement).dataset.id;
+						if (id && confirm('Hapus kata ini?')) {
+							deleteVocabEntry(id);
+							init(); // Re-render
+						}
+					});
+				});
+			}
+		}
+	}
+
+	// Initialize UI
+	init();
+</script>
