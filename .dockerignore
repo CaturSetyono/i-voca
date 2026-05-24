@@ -1,0 +1,11 @@
+node_modules
+dist
+.astro
+.vscode
+.git
+.gitignore
+.npmrc
+vercel.json
+README.md
+Dockerfile
+nginx.conf
