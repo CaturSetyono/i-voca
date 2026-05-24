@@ -28,18 +28,8 @@
 	</div>
 </div>
 
-<script lang="ts">
+<script>
 	import { popPendingCelebrations } from '../utils/storage.js';
-
-	const modal = document.getElementById('celebration-modal');
-	const modalTitle = document.getElementById('modal-title');
-	const modalMessage = document.getElementById('modal-message');
-	const modalBadgeInfo = document.getElementById('modal-badge-info');
-	const modalBadgeName = document.getElementById('modal-badge-name');
-	const modalBadgeDesc = document.getElementById('modal-badge-desc');
-	const modalBadgeIcon = document.getElementById('modal-badge-icon') as HTMLImageElement;
-	const modalLevelIcon = document.getElementById('modal-level-icon');
-	const closeModal = document.getElementById('close-modal');
 
 	const badges = {
 		badge_01: { name: 'Novice Smith', desc: 'Menandakan Anda telah menempa fondasi bahasa Anda.', icon: '/assets/badges/badge_01.svg' },
@@ -51,71 +41,82 @@
 	let celebrationQueue: any[] = [];
 	let isModalOpen = false;
 
-	function showModal() {
-		modal?.classList.remove('hidden');
-		isModalOpen = true;
-	}
+	function initModal() {
+		const modal = document.getElementById('celebration-modal');
+		const modalTitle = document.getElementById('modal-title');
+		const modalMessage = document.getElementById('modal-message');
+		const modalBadgeInfo = document.getElementById('modal-badge-info');
+		const modalBadgeName = document.getElementById('modal-badge-name');
+		const modalBadgeDesc = document.getElementById('modal-badge-desc');
+		const modalBadgeIcon = document.getElementById('modal-badge-icon') as HTMLImageElement;
+		const modalLevelIcon = document.getElementById('modal-level-icon');
+		const closeModal = document.getElementById('close-modal');
 
-	function hideModal() {
-		modal?.classList.add('hidden');
-		isModalOpen = false;
-	}
+		if (!modal) return;
 
-	function processQueue() {
-		if (isModalOpen || celebrationQueue.length === 0) return;
-
-		const celebration = celebrationQueue.shift();
-		const { type, data } = celebration;
-
-		if (type === 'level-up') {
-			const level = data.level;
-			if (modalTitle) modalTitle.textContent = 'NAIK LEVEL!';
-			if (modalMessage) modalMessage.textContent = `Kamu sekarang level ${level}`;
-			if (modalLevelIcon) {
-				modalLevelIcon.textContent = level.toString();
-				modalLevelIcon.classList.remove('hidden');
-			}
-			modalBadgeIcon?.classList.add('hidden');
-			modalBadgeInfo?.classList.add('hidden');
-		} else if (type === 'badge-unlocked') {
-			const badgeId = data.badgeId;
-			const badge = (badges as any)[badgeId];
-			
-			if (badge) {
-				if (modalTitle) modalTitle.textContent = 'BADGE BARU!';
-				if (modalMessage) modalMessage.textContent = 'Kamu membuka pencapaian baru';
-				if (modalBadgeName) modalBadgeName.textContent = badge.name;
-				if (modalBadgeDesc) modalBadgeDesc.textContent = badge.desc;
-				if (modalBadgeIcon) {
-					modalBadgeIcon.src = badge.icon;
-					modalBadgeIcon.classList.remove('hidden');
-				}
-				modalLevelIcon?.classList.add('hidden');
-				modalBadgeInfo?.classList.remove('hidden');
-			}
+		function showModal() {
+			modal?.classList.remove('hidden');
+			isModalOpen = true;
 		}
 
-		showModal();
-	}
+		function hideModal() {
+			modal?.classList.add('hidden');
+			isModalOpen = false;
+		}
 
-	closeModal?.addEventListener('click', () => {
-		hideModal();
-		// Small delay before next one for visual breath
-		setTimeout(processQueue, 300);
-	});
+		function processQueue() {
+			if (isModalOpen || celebrationQueue.length === 0) return;
 
-	window.addEventListener('level-up', (e: any) => {
-		celebrationQueue.push({ type: 'level-up', data: e.detail });
-		processQueue();
-	});
+			const celebration = celebrationQueue.shift();
+			const { type, data } = celebration;
 
-	window.addEventListener('badge-unlocked', (e: any) => {
-		celebrationQueue.push({ type: 'badge-unlocked', data: e.detail });
-		processQueue();
-	});
+			if (type === 'level-up') {
+				const level = data.level;
+				if (modalTitle) modalTitle.textContent = 'NAIK LEVEL!';
+				if (modalMessage) modalMessage.textContent = `Kamu sekarang level ${level}`;
+				if (modalLevelIcon) {
+					modalLevelIcon.textContent = level.toString();
+					modalLevelIcon.classList.remove('hidden');
+				}
+				modalBadgeIcon?.classList.add('hidden');
+				modalBadgeInfo?.classList.add('hidden');
+			} else if (type === 'badge-unlocked') {
+				const badgeId = data.badgeId;
+				const badge = (badges as any)[badgeId];
+				
+				if (badge) {
+					if (modalTitle) modalTitle.textContent = 'BADGE BARU!';
+					if (modalMessage) modalMessage.textContent = 'Kamu membuka pencapaian baru';
+					if (modalBadgeName) modalBadgeName.textContent = badge.name;
+					if (modalBadgeDesc) modalBadgeDesc.textContent = badge.desc;
+					if (modalBadgeIcon) {
+						modalBadgeIcon.src = badge.icon;
+						modalBadgeIcon.classList.remove('hidden');
+					}
+					modalLevelIcon?.classList.add('hidden');
+					modalBadgeInfo?.classList.remove('hidden');
+				}
+			}
 
-	// Check pending on load
-	window.addEventListener('load', () => {
+			showModal();
+		}
+
+		closeModal?.addEventListener('click', () => {
+			hideModal();
+			setTimeout(processQueue, 300);
+		});
+
+		window.addEventListener('level-up', (e: any) => {
+			celebrationQueue.push({ type: 'level-up', data: e.detail });
+			processQueue();
+		});
+
+		window.addEventListener('badge-unlocked', (e: any) => {
+			celebrationQueue.push({ type: 'badge-unlocked', data: e.detail });
+			processQueue();
+		});
+
+		// Check pending on load
 		setTimeout(() => {
 			const pending = popPendingCelebrations();
 			if (pending.length > 0) {
@@ -123,6 +124,8 @@
 				processQueue();
 			}
 		}, 800);
-	});
+	}
+
+	document.addEventListener('astro:page-load', initModal);
 </script>
 
