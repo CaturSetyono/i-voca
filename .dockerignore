@@ -5,7 +5,4 @@ dist
 .git
 .gitignore
 .npmrc
-vercel.json
 README.md
-Dockerfile
-nginx.conf
