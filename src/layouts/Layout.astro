@@ -1,7 +1,9 @@
 ---
 import '../styles/global.css';
 import CelebrationModal from '../components/CelebrationModal.astro';
+import InstallPrompt from '../components/InstallPrompt.astro';
 import { pwaInfo } from 'virtual:pwa-info';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
 	title?: string;
@@ -11,43 +13,49 @@ const { title = "VocabForge" } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="id">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		
+		<!-- View Transitions for SPA feel -->
+		<ClientRouter />
+		
+		<!-- Performance: Preconnect to font domains -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&family=Nunito+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+		
 		{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} /> }
+		
 		<script>
 			import { registerSW } from 'virtual:pwa-register';
 			registerSW({
 				onNeedRefresh() {
-					if (confirm('Aplikasi diperbarui. Refresh sekarang?')) {
+					if (confirm('Update tersedia. Refresh sekarang?')) {
 						location.reload();
 					}
 				},
 				onOfflineReady() {
-					console.log('Aplikasi siap digunakan secara offline.');
+					console.log('App ready for offline use.');
 				},
 			});
 		</script>
 	</head>
-	<body class="bg-[#F1F5F9] min-h-screen flex justify-center py-0 md:py-12">
-		<!-- Mobile Frame Container -->
+	<body class="bg-[#F1F5F9] min-h-screen flex justify-center py-0 md:py-8 lg:py-12 overflow-x-hidden">
+		<!-- Mobile-First Container -->
 		<div class="w-full max-w-[440px] min-h-screen md:min-h-[880px] md:h-[880px] bg-brand-bg relative flex flex-col border-0 md:border-[6px] md:border-brand-outline md:rounded-[48px] shadow-2xl overflow-hidden animate-zoom-in">
-			<!-- Phone Notch Emulation on Desktop -->
-			<div class="hidden md:flex h-10 w-full bg-brand-outline items-center justify-center relative overflow-hidden">
-				<div class="absolute inset-0 bg-white/5 opacity-10"></div>
-				<div class="w-24 h-3 bg-gray-200/50 rounded-full z-10 shadow-inner"></div>
+			<!-- Notch (Desktop only) -->
+			<div class="hidden md:flex h-10 w-full bg-brand-outline items-center justify-center relative shrink-0">
+				<div class="w-24 h-3 bg-gray-200/50 rounded-full shadow-inner"></div>
 			</div>
 			
 			<div class="flex-1 overflow-y-auto flex flex-col relative bg-[#F8FAFC]">
-				<!-- App Background Pattern -->
+				<!-- Background Pattern -->
 				<div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#1E3A8A 1px, transparent 1px); background-size: 24px 24px;"></div>
 				
 				<div class="relative z-10 flex-1 flex flex-col">
@@ -56,7 +64,9 @@ const { title = "VocabForge" } = Astro.props;
 			</div>
 		</div>
 		
+		<!-- App-wide Modals -->
 		<CelebrationModal />
+		<InstallPrompt />
 	</body>
 </html>
 
