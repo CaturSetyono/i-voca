@@ -76,62 +76,70 @@ import Layout from '../layouts/Layout.astro';
 	</main>
 </Layout>
 
-<script lang="ts">
+<script>
 	import { addVocabEntry } from '../utils/storage.js';
 
-	const form = document.getElementById('vocab-form') as HTMLFormElement;
-	const wordIdInput = document.getElementById('word_id') as HTMLInputElement;
-	const wordEnInput = document.getElementById('word_en') as HTMLInputElement;
-	const wordIdError = document.getElementById('word_id_error');
-	const wordEnError = document.getElementById('word_en_error');
-	const submitBtn = document.getElementById('submit-btn');
+	function setupForm() {
+		const form = document.getElementById('vocab-form');
+		const wordIdInput = document.getElementById('word_id');
+		const wordEnInput = document.getElementById('word_en');
+		const wordIdError = document.getElementById('word_id_error');
+		const wordEnError = document.getElementById('word_en_error');
+		const submitBtn = document.getElementById('submit-btn');
 
-	form?.addEventListener('submit', (e) => {
-		e.preventDefault();
-		
-		let hasError = false;
-		const wordId = wordIdInput.value.trim();
-		const wordEn = wordEnInput.value.trim();
+		if (!form || !wordIdInput || !wordEnInput) return;
 
-		if (!wordId) {
-			wordIdError?.classList.remove('hidden');
-			wordIdInput.classList.add('border-red-500');
-			hasError = true;
-		} else {
+		const handleSubmit = (e) => {
+			e.preventDefault();
+			
+			let hasError = false;
+			const wordId = wordIdInput.value.trim();
+			const wordEn = wordEnInput.value.trim();
+
+			if (!wordId) {
+				wordIdError?.classList.remove('hidden');
+				wordIdInput.classList.add('border-red-500');
+				hasError = true;
+			} else {
+				wordIdError?.classList.add('hidden');
+				wordIdInput.classList.remove('border-red-500');
+			}
+
+			if (!wordEn) {
+				wordEnError?.classList.remove('hidden');
+				wordEnInput.classList.add('border-red-500');
+				hasError = true;
+			} else {
+				wordEnError?.classList.add('hidden');
+				wordEnInput.classList.remove('border-red-500');
+			}
+
+			if (!hasError) {
+				if (submitBtn) {
+					submitBtn.innerHTML = '<span class="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>';
+					submitBtn.disabled = true;
+				}
+				
+				setTimeout(() => {
+					addVocabEntry(wordId, wordEn);
+					window.location.href = '/';
+				}, 400);
+			}
+		};
+
+		form.addEventListener('submit', handleSubmit);
+
+		// Clear errors on input
+		wordIdInput.addEventListener('input', () => {
 			wordIdError?.classList.add('hidden');
 			wordIdInput.classList.remove('border-red-500');
-		}
+		});
 
-		if (!wordEn) {
-			wordEnError?.classList.remove('hidden');
-			wordEnInput.classList.add('border-red-500');
-			hasError = true;
-		} else {
+		wordEnInput.addEventListener('input', () => {
 			wordEnError?.classList.add('hidden');
 			wordEnInput.classList.remove('border-red-500');
-		}
+		});
+	}
 
-		if (!hasError) {
-			if (submitBtn) {
-				submitBtn.innerHTML = '<span class="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>';
-				(submitBtn as HTMLButtonElement).disabled = true;
-			}
-			
-			setTimeout(() => {
-				addVocabEntry(wordId, wordEn);
-				window.location.href = '/';
-			}, 500);
-		}
-	});
-
-	// Clear errors on input
-	wordIdInput?.addEventListener('input', () => {
-		wordIdError?.classList.add('hidden');
-		wordIdInput.classList.remove('border-red-500');
-	});
-
-	wordEnInput?.addEventListener('input', () => {
-		wordEnError?.classList.add('hidden');
-		wordEnInput.classList.remove('border-red-500');
-	});
+	document.addEventListener('astro:page-load', setupForm);
 </script>
