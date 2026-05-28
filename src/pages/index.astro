@@ -112,98 +112,116 @@ import CelebrationModal from '../components/CelebrationModal.astro';
 	</nav>
 </Layout>
 
-<script lang="ts">
+<script>
 	import { getVocabData, getUserProfile, deleteVocabEntry } from '../utils/storage.js';
 
-	let currentVocab: any[] = [];
-	let searchQuery = '';
+	function initDashboard() {
+		let currentVocab = [];
+		let searchQuery = '';
 
-	function renderVocabList(vocabToRender: any[]) {
 		const vocabList = document.getElementById('vocab-list');
-		if (!vocabList) return;
-
-		if (vocabToRender.length === 0) {
-			const emptyMsg = searchQuery 
-				? `Tidak ada hasil untuk "${searchQuery}"`
-				: 'Belum ada kata yang ditempa... Mulailah sekarang!';
-			
-			vocabList.innerHTML = `
-				<div class="clay-card !bg-transparent border-dashed !shadow-none py-12 flex flex-col items-center gap-4">
-					<div class="h-16 w-16 text-gray-200">
-						<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 3"/><circle cx="12" cy="12" r="10"/></svg>
-					</div>
-					<p class="text-gray-400 font-bold italic text-center px-8 text-sm">
-						${emptyMsg}
-					</p>
-				</div>
-			`;
-		} else {
-			vocabList.innerHTML = vocabToRender.map(word => `
-				<div class="clay-card !p-5 flex justify-between items-center group relative overflow-hidden animate-slide-up" data-id="${word.id}">
-					<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-brand-primary/20"></div>
-					<div class="pl-2">
-						<p class="font-black text-xl uppercase tracking-tighter leading-tight text-brand-secondary font-display">${word.word_id}</p>
-						<p class="text-brand-primary font-bold italic text-xs mt-0.5">${word.word_en}</p>
-					</div>
-					<button class="delete-btn h-10 w-10 flex items-center justify-center rounded-xl border-2 border-brand-outline bg-white hover:bg-red-50 hover:border-red-500 transition-all cursor-pointer shadow-sm active:translate-y-[1px] active:shadow-none" data-id="${word.id}">
-						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-					</button>
-				</div>
-			`).join('');
-
-			// Add delete listeners
-			document.querySelectorAll('.delete-btn').forEach(btn => {
-				btn.addEventListener('click', (e) => {
-					const id = (e.currentTarget as HTMLElement).dataset.id;
-					if (id && confirm('Hapus kata ini dari koleksi tempaan Anda?')) {
-						deleteVocabEntry(id);
-						init(); // Re-render
-					}
-				});
-			});
-		}
-	}
-
-	function init() {
-		const profile = getUserProfile();
-		currentVocab = getVocabData();
-
-		// Update Profile UI
 		const levelDisplay = document.getElementById('level-display');
 		const xpDisplay = document.getElementById('xp-display');
 		const progressBar = document.getElementById('progress-bar');
 		const totalWordsDisplay = document.getElementById('total-words');
 		const totalBadgesDisplay = document.getElementById('total-badges');
+		const searchInput = document.getElementById('search-vocab');
 
-		if (levelDisplay) {
-			let title = 'IRON FORGER';
-			if (profile.level >= 5) title = 'STEEL SMITH';
-			if (profile.level >= 10) title = 'VOCAB TITAN';
-			levelDisplay.textContent = `LVL ${profile.level} - ${title}`;
+		function renderVocabList(vocabToRender) {
+			if (!vocabList) return;
+
+			if (vocabToRender.length === 0) {
+				const emptyMsg = searchQuery 
+					? `Tidak ada hasil untuk "${searchQuery}"`
+					: 'Dapur tempaan masih dingin...';
+				
+				vocabList.innerHTML = `
+					<div class="clay-card !bg-transparent border-dashed !shadow-none py-12 flex flex-col items-center gap-4">
+						<div class="h-16 w-16 text-gray-200 animate-pulse">
+							<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+						</div>
+						<p class="text-gray-400 font-bold italic text-center px-8 text-sm uppercase tracking-wider">
+							${emptyMsg}
+						</p>
+					</div>
+				`;
+			} else {
+				vocabList.innerHTML = vocabToRender.map(word => `
+					<div class="clay-card !p-5 flex justify-between items-center group relative overflow-hidden animate-slide-up" data-id="${word.id}">
+						<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-brand-primary/20"></div>
+						<div class="pl-2">
+							<p class="font-black text-xl uppercase tracking-tighter leading-tight text-brand-secondary font-display">${word.word_id}</p>
+							<p class="text-brand-primary font-bold italic text-xs mt-0.5">${word.word_en}</p>
+						</div>
+						<button class="delete-btn h-10 w-10 flex items-center justify-center rounded-xl border-2 border-brand-outline bg-white hover:bg-red-50 hover:border-red-500 transition-all cursor-pointer shadow-sm active:translate-y-[1px] active:shadow-none" data-id="${word.id}">
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+						</button>
+					</div>
+				`).join('');
+
+				// Add delete listeners
+				vocabList.querySelectorAll('.delete-btn').forEach(btn => {
+					btn.addEventListener('click', (e) => {
+						const id = e.currentTarget.dataset.id;
+						if (id && confirm('Hapus kata ini dari koleksi tempaan Anda?')) {
+							deleteVocabEntry(id);
+							updateState(); 
+						}
+					});
+				});
+			}
 		}
-		if (xpDisplay) xpDisplay.textContent = `${profile.current_xp} / 100 XP`;
-		if (progressBar) progressBar.style.width = `${profile.current_xp}%`;
-		if (totalWordsDisplay) totalWordsDisplay.textContent = currentVocab.length.toString();
-		if (totalBadgesDisplay) totalBadgesDisplay.textContent = profile.unlocked_badges.length.toString();
 
-		// Initial render
-		filterAndRender();
+		function filterAndRender() {
+			const filtered = currentVocab.filter(word => 
+				word.word_id.toLowerCase().includes(searchQuery.toLowerCase()) || 
+				word.word_en.toLowerCase().includes(searchQuery.toLowerCase())
+			);
+			renderVocabList(filtered);
+		}
+
+		function updateUI(profile, vocab) {
+			if (levelDisplay) {
+				let title = 'IRON FORGER';
+				if (profile.level >= 5) title = 'STEEL SMITH';
+				if (profile.level >= 10) title = 'VOCAB TITAN';
+				levelDisplay.textContent = `LVL ${profile.level} - ${title}`;
+			}
+			if (xpDisplay) xpDisplay.textContent = `${profile.current_xp} / 100 XP`;
+			if (progressBar) progressBar.style.width = `${profile.current_xp}%`;
+			if (totalWordsDisplay) totalWordsDisplay.textContent = vocab.length.toString();
+			if (totalBadgesDisplay) totalBadgesDisplay.textContent = profile.unlocked_badges.length.toString();
+			
+			filterAndRender();
+		}
+
+		function updateState() {
+			const profile = getUserProfile();
+			currentVocab = getVocabData();
+			updateUI(profile, currentVocab);
+		}
+
+		// Initial Update
+		updateState();
+
+		// Event Listeners
+		searchInput?.addEventListener('input', (e) => {
+			searchQuery = e.target.value;
+			filterAndRender();
+		});
+
+		// Listen for storage changes
+		const handleStorageChange = (e) => {
+			updateState();
+		};
+
+		window.addEventListener('vocab-forge-change', handleStorageChange);
+		
+		// Clean up listener on next page load (View Transitions)
+		document.addEventListener('astro:after-swap', () => {
+			window.removeEventListener('vocab-forge-change', handleStorageChange);
+		}, { once: true });
 	}
 
-	function filterAndRender() {
-		const filtered = currentVocab.filter(word => 
-			word.word_id.toLowerCase().includes(searchQuery.toLowerCase()) || 
-			word.word_en.toLowerCase().includes(searchQuery.toLowerCase())
-		);
-		renderVocabList(filtered);
-	}
-
-	// Search listener
-	document.getElementById('search-vocab')?.addEventListener('input', (e) => {
-		searchQuery = (e.target as HTMLInputElement).value;
-		filterAndRender();
-	});
-
-	// Initialize UI
-	init();
+	document.addEventListener('astro:page-load', initDashboard);
 </script>
