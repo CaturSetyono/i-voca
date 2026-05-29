@@ -13,6 +13,17 @@ const DEFAULT_PROFILE = {
 };
 
 /**
+ * Emit a custom event when data changes
+ */
+const emitChange = (key, data) => {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('vocab-forge-change', { 
+      detail: { key, data } 
+    }));
+  }
+};
+
+/**
  * Get all vocabulary data
  */
 export const getVocabData = () => {
@@ -47,6 +58,7 @@ export const getUserProfile = () => {
 const saveProfile = (profile) => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(profile));
+  emitChange(STORAGE_KEYS.PROFILE, profile);
 };
 
 /**
@@ -63,6 +75,7 @@ export const addVocabEntry = (wordId, wordEn) => {
   
   const updatedVocab = [newEntry, ...vocab];
   localStorage.setItem(STORAGE_KEYS.VOCAB, JSON.stringify(updatedVocab));
+  emitChange(STORAGE_KEYS.VOCAB, updatedVocab);
   
   // Award XP
   updateXP(10);
@@ -77,6 +90,7 @@ export const deleteVocabEntry = (id) => {
   const vocab = getVocabData();
   const updatedVocab = vocab.filter(entry => entry.id !== id);
   localStorage.setItem(STORAGE_KEYS.VOCAB, JSON.stringify(updatedVocab));
+  emitChange(STORAGE_KEYS.VOCAB, updatedVocab);
   return updatedVocab;
 };
 
@@ -117,12 +131,10 @@ export const updateXP = (amount) => {
   
   current_xp += amount;
   
-  let leveledUp = false;
   // Leveling logic: 100 XP per level
   while (current_xp >= 100) {
     current_xp -= 100;
     level += 1;
-    leveledUp = true;
     addPendingCelebration('level-up', { level });
     window.dispatchEvent(new CustomEvent('level-up', { detail: { level } }));
   }
@@ -154,3 +166,4 @@ export const updateXP = (amount) => {
   
   return profile;
 };
+
