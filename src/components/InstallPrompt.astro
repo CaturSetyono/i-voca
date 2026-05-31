@@ -1,0 +1,123 @@
+---
+---
+
+<div id="pwa-install-prompt" class="fixed bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] z-[60] hidden">
+    <div class="clay-card !p-4 bg-white/95 backdrop-blur-md border-2 border-brand-primary/20 flex flex-col gap-4 shadow-2xl animate-slide-up">
+        <div class="flex items-center gap-4">
+            <div class="h-12 w-12 bg-brand-primary rounded-2xl flex items-center justify-center shadow-neo-sm shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            </div>
+            <div class="flex flex-col">
+                <h3 class="font-black text-brand-secondary text-sm uppercase leading-none font-display">Instal VocabForge</h3>
+                <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-wider">Akses cepat & hemat kuota!</p>
+            </div>
+            <button id="close-install-prompt" class="ml-auto h-8 w-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Content for Android/Chrome -->
+        <div id="prompt-android" class="hidden flex flex-col gap-3">
+            <p class="text-xs font-medium text-gray-500 leading-relaxed">
+                Tambahkan ke layar utama untuk pengalaman belajar yang lebih mulus dan bisa dibuka offline.
+            </p>
+            <button id="install-button" class="clay-btn-success !py-3 !text-sm w-full">
+                Instal Sekarang
+            </button>
+        </div>
+
+        <!-- Content for iOS -->
+        <div id="prompt-ios" class="hidden flex flex-col gap-3">
+            <div class="p-3 bg-brand-bg rounded-xl border-2 border-brand-outline border-dashed">
+                <p class="text-[11px] font-medium text-gray-600 leading-snug">
+                    Tap ikon <span class="bg-white px-1.5 py-0.5 rounded border border-gray-300 mx-0.5 inline-block"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="inline"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg></span> 
+                    <strong>Bagikan / Share</strong> di bawah browser Safari, lalu pilih 
+                    <strong>Tambah ke Layar Utama</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deferredPrompt: any;
+
+    function initInstallPrompt() {
+        const promptEl = document.getElementById('pwa-install-prompt');
+        const androidContent = document.getElementById('prompt-android');
+        const iosContent = document.getElementById('prompt-ios');
+        const installBtn = document.getElementById('install-button');
+        const closeBtn = document.getElementById('close-install-prompt');
+
+        if (!promptEl) return;
+
+        // Detect Device
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+
+        // Check if user has dismissed before
+        const isDismissed = localStorage.getItem('pwa_prompt_dismissed') === 'true';
+
+        function showPrompt() {
+            if (isStandalone || isDismissed) return;
+            
+            promptEl?.classList.remove('hidden');
+            
+            if (isIOS) {
+                iosContent?.classList.remove('hidden');
+            } else if (deferredPrompt) {
+                androidContent?.classList.remove('hidden');
+            }
+        }
+
+        installBtn?.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            
+            if (outcome === 'accepted') {
+                promptEl?.classList.add('hidden');
+            }
+            deferredPrompt = null;
+        });
+
+        closeBtn?.addEventListener('click', () => {
+            promptEl?.classList.add('hidden');
+            localStorage.setItem('pwa_prompt_dismissed', 'true');
+        });
+
+        // Handle iOS display
+        if (isIOS && !isStandalone && !isDismissed) {
+            setTimeout(showPrompt, 2000);
+        }
+
+        // Handle Android/Desktop if event already fired
+        if (deferredPrompt && !isStandalone && !isDismissed) {
+            showPrompt();
+        }
+    }
+
+    // This event only fires once on initial load
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Try to show if elements exist
+        const androidContent = document.getElementById('prompt-android');
+        const promptEl = document.getElementById('pwa-install-prompt');
+        if (androidContent && promptEl) {
+            promptEl.classList.remove('hidden');
+            androidContent.classList.remove('hidden');
+        }
+    });
+
+    document.addEventListener('astro:page-load', initInstallPrompt);
+
+    window.addEventListener('appinstalled', () => {
+        const promptEl = document.getElementById('pwa-install-prompt');
+        promptEl?.classList.add('hidden');
+        deferredPrompt = null;
+        console.log('PWA was installed');
+    });
+</script>
