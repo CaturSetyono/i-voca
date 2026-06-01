@@ -23,7 +23,8 @@ echo ""
 
 COUNT=0
 # Use explicit start/end dates so the range can span months
-START_DATE="2026-05-20"
+# Start: 1 June 2026 (requested), End: 3 June 2026 (hari ini)
+START_DATE="2026-06-01"
 END_DATE="2026-06-03"
 CURRENT_DATE="$START_DATE"
 
