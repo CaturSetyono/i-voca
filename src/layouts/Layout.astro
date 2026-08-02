@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import CelebrationModal from '../components/CelebrationModal.astro';
 import InstallPrompt from '../components/InstallPrompt.astro';
+import ConfirmModal from '../components/ConfirmModal.astro';
+import Toast from '../components/Toast.astro';
 import { pwaInfo } from 'virtual:pwa-info';
 import { ClientRouter } from 'astro:transitions';
 
@@ -9,11 +11,11 @@ interface Props {
 	title?: string;
 }
 
-const { title = "VocabForge" } = Astro.props;
+const { title = "PhraseForge" } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="id">
+<html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -36,7 +38,15 @@ const { title = "VocabForge" } = Astro.props;
 			import { registerSW } from 'virtual:pwa-register';
 			registerSW({
 				onNeedRefresh() {
-					if (confirm('Update tersedia. Refresh sekarang?')) {
+					if (window.showConfirmModal) {
+						window.showConfirmModal({
+							title: 'Update Available',
+							message: 'A new version of PhraseForge is ready. Reload now?',
+							confirmText: 'Reload Now',
+							isDanger: false,
+							onConfirm: () => location.reload()
+						});
+					} else if (confirm('Update available. Reload now?')) {
 						location.reload();
 					}
 				},
@@ -49,6 +59,9 @@ const { title = "VocabForge" } = Astro.props;
 	<body class="bg-[#F1F5F9] min-h-screen flex justify-center py-0 md:py-8 lg:py-12 overflow-x-hidden">
 		<!-- Mobile-First Container -->
 		<div class="w-full max-w-[440px] min-h-screen md:min-h-[880px] md:h-[880px] bg-brand-bg relative flex flex-col border-0 md:border-[6px] md:border-brand-outline md:rounded-[48px] shadow-2xl overflow-hidden animate-zoom-in">
+			<!-- Toast Container -->
+			<Toast />
+
 			<!-- Notch (Desktop only) -->
 			<div class="hidden md:flex h-10 w-full bg-brand-outline items-center justify-center relative shrink-0">
 				<div class="w-24 h-3 bg-gray-200/50 rounded-full shadow-inner"></div>
@@ -67,6 +80,7 @@ const { title = "VocabForge" } = Astro.props;
 		<!-- App-wide Modals -->
 		<CelebrationModal />
 		<InstallPrompt />
+		<ConfirmModal />
 	</body>
 </html>
 
