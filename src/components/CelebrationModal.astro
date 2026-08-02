@@ -13,17 +13,17 @@
 		</div>
 
 		<div class="flex flex-col gap-2">
-			<h2 id="modal-title" class="text-3xl font-black uppercase tracking-tighter leading-none text-brand-secondary font-display">SELAMAT!</h2>
-			<p id="modal-message" class="font-bold text-brand-primary uppercase text-[10px] tracking-[0.2em]">Kamu naik level!</p>
+			<h2 id="modal-title" class="text-3xl font-black uppercase tracking-tighter leading-none text-brand-secondary font-display">CONGRATS!</h2>
+			<p id="modal-message" class="font-bold text-brand-primary uppercase text-[10px] tracking-[0.2em]">You leveled up!</p>
 		</div>
 
 		<div id="modal-badge-info" class="hidden flex flex-col gap-1">
 			<h3 id="modal-badge-name" class="font-black text-xl leading-tight text-brand-secondary">Novice Smith</h3>
-			<p id="modal-badge-desc" class="text-xs font-medium italic text-gray-400 px-4">Menandakan pengguna mulai menempa fondasi bahasanya.</p>
+			<p id="modal-badge-desc" class="text-xs font-medium italic text-gray-400 px-4">Forged your first language foundations.</p>
 		</div>
 
 		<button id="close-modal" class="clay-btn w-full py-4 text-xl">
-			Mantap!
+			Awesome!
 		</button>
 	</div>
 </div>
@@ -32,10 +32,10 @@
 	import { popPendingCelebrations } from '../utils/storage.js';
 
 	const badges = {
-		badge_01: { name: 'Novice Smith', desc: 'Menandakan Anda telah menempa fondasi bahasa Anda.', icon: '/assets/badges/badge_01.svg' },
-		badge_02: { name: 'Word Weaver', desc: 'Anda mulai mahir merajut untaian kata-kata dasar.', icon: '/assets/badges/badge_02.svg' },
-		badge_03: { name: 'Fluent Voyager', desc: 'Siap berlayar lebih jauh ke samudera percakapan.', icon: '/assets/badges/badge_03.svg' },
-		badge_04: { name: 'Vocab Titan', desc: 'Kekuatan memori kosakata Anda sungguh luar biasa.', icon: '/assets/badges/badge_04.svg' }
+		badge_01: { name: 'Novice Smith', desc: 'Forged your first language foundations.', icon: '/assets/badges/badge_01.svg' },
+		badge_02: { name: 'Phrase Weaver', desc: 'Crafting conversational phrase strings with confidence.', icon: '/assets/badges/badge_02.svg' },
+		badge_03: { name: 'Fluent Voyager', desc: 'Sailing smoothly into deeper English conversations.', icon: '/assets/badges/badge_03.svg' },
+		badge_04: { name: 'Phrase Titan', desc: 'Mastering an expansive vault of daily expressions.', icon: '/assets/badges/badge_04.svg' }
 	};
 
 	let celebrationQueue: any[] = [];
@@ -72,8 +72,8 @@
 
 			if (type === 'level-up') {
 				const level = data.level;
-				if (modalTitle) modalTitle.textContent = 'NAIK LEVEL!';
-				if (modalMessage) modalMessage.textContent = `Kamu sekarang level ${level}`;
+				if (modalTitle) modalTitle.textContent = 'LEVEL UP!';
+				if (modalMessage) modalMessage.textContent = `You are now Level ${level}`;
 				if (modalLevelIcon) {
 					modalLevelIcon.textContent = level.toString();
 					modalLevelIcon.classList.remove('hidden');
@@ -85,8 +85,8 @@
 				const badge = (badges as any)[badgeId];
 				
 				if (badge) {
-					if (modalTitle) modalTitle.textContent = 'BADGE BARU!';
-					if (modalMessage) modalMessage.textContent = 'Kamu membuka pencapaian baru';
+					if (modalTitle) modalTitle.textContent = 'NEW BADGE!';
+					if (modalMessage) modalMessage.textContent = 'Unlocked a new milestone badge';
 					if (modalBadgeName) modalBadgeName.textContent = badge.name;
 					if (modalBadgeDesc) modalBadgeDesc.textContent = badge.desc;
 					if (modalBadgeIcon) {
@@ -128,4 +128,3 @@
 
 	document.addEventListener('astro:page-load', initModal);
 </script>
-
