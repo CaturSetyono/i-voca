@@ -1,24 +1,24 @@
-# 🛠️ VocabForge
+# 🛠️ PhraseForge
 
-**VocabForge** adalah aplikasi web pencatat kosakata personal berbasis PWA (*Progressive Web App*) yang menggabungkan kecepatan performa **Astro JS** dengan pengalaman bermain game (**Gamifikasi**). Aplikasi ini dirancang untuk membantu pengguna memperkaya kosakata bahasa asing dengan cara yang interaktif, taktil, dan menyenangkan.
+**PhraseForge** is a gamified Progressive Web App (PWA) built with **Astro JS** and **Tailwind CSS v4** designed for daily natural phrase mastery. Transitioning from simple vocabulary memorization to real-world Indonesian <-> English phrase forging, PhraseForge incorporates daily active streaks and AI-powered phrase evaluation via OpenRouter.
 
 ---
 
-## ✨ Fitur Utama
+## ✨ Core Features
 
-- **🚀 App-First Experience**: Tidak ada landing page yang membosankan. Pengguna langsung masuk ke dashboard aplikasi untuk mulai belajar.
-- **🎮 Sistem Gamifikasi**:
-  - **XP & Level**: Dapatkan +10 XP untuk setiap kata baru yang ditempa.
-  - **Lencana (Badges)**: Buka koleksi lencana unik (Novice Smith, Word Weaver, dll.) berdasarkan jumlah kosakata.
-  - **Celebration Modal**: Animasi perayaan instan saat naik level atau membuka badge baru.
-- **📱 PWA & Mobile Optimized**:
-  - **Installable**: Dapat di-instal di Android, iOS, dan Desktop sebagai aplikasi native.
-  - **Smart Detection**: Deteksi perangkat otomatis dengan instruksi instalasi khusus untuk iOS (Safari) dan Android (Chrome).
-  - **Offline Ready**: Tetap bisa diakses tanpa koneksi internet setelah load pertama.
-- **💎 Design Claymorphic**: Antarmuka 3D minimalis yang taktil dan nyata (Neo-Brutalism Minimalist).
-- **🔒 Zero-Server Architecture**: Seluruh data disimpan secara aman dan instan di `localStorage` perangkat Anda. Data Anda adalah milik Anda sepenuhnya.
-- **🔍 Fast Search**: Cari kosakata yang sudah ditempa dengan fitur filter instan.
-- **⚡ SPA Feel**: Navigasi antar halaman super mulus tanpa reload menggunakan Astro View Transitions.
+- **🚀 English-First Experience**: Clean, intuitive English user interface tailored for daily phrase practice.
+- **🔥 Daily Streak Engine**: Tracks consecutive active learning days with a dynamic vector **Fire SVG Icon**. Adding at least 1 phrase per day ignites and keeps your streak alive!
+- **🤖 OpenRouter AI Synchronization**:
+  - Model: `nvidia/nemotron-3-ultra-550b-a55b:free`.
+  - Batch validates phrase pairs for translation accuracy, grammar, typos, and natural phrasing.
+  - Quota: **3 Sync charges per day** (auto-recharges 1 charge every 8 hours).
+  - Flags invalid phrases with actionable AI correction notes and applies a **-5 XP penalty** until corrected.
+- **🎮 Claymorphic Gamification**:
+  - **XP & Level System**: Earn +10 XP per forged phrase and level up every 100 XP.
+  - **Achievement Badges**: Unlock milestone badges (Novice Smith, Phrase Weaver, Fluent Voyager, Phrase Titan).
+  - **Celebration System**: Real-time level-up and milestone unlock modals.
+- **📱 PWA & Offline Support**: Fully installable on iOS, Android, and Desktop with offline data persistence.
+- **🔒 Local-First Privacy**: All phrase data remains stored locally in `localStorage`.
 
 ---
 
@@ -26,84 +26,55 @@
 
 - **Framework**: [Astro JS](https://astro.build/) (v5+)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) (v4+)
+- **AI Service**: [OpenRouter API](https://openrouter.ai/) (`nvidia/nemotron-3-ultra-550b-a55b:free`)
 - **PWA**: [@vite-pwa/astro](https://vite-pwa-org.netlify.app/frameworks/astro.html)
-- **Icons**: Lucide Icons
 - **Storage**: LocalStorage API
 
 ---
 
-## 🚀 Cara Setup Lokal
+## 🚀 Local Development Setup
 
-Pastikan Anda sudah menginstal **Node.js** (versi 22 atau lebih baru).
+Requirements: **Node.js** (v22.12.0+).
 
-1. **Clone Repositori**:
-   ```bash
-   git clone <url-repository>
-   cd I-VOC
-   ```
-
-2. **Instal Dependensi**:
+1. **Clone Repository & Install Dependencies**:
    ```bash
    npm install
    ```
 
-3. **Jalankan Mode Pengembangan**:
+2. **Environment Variables**:
+   Copy `.env.example` to `.env` and add your OpenRouter API Key:
+   ```bash
+   cp .env.example .env
+   ```
+   Add your key:
+   ```env
+   OPENROUTER_API_KEY=your_openrouter_api_key_here
+   ```
+
+3. **Start Development Server**:
    ```bash
    npm run dev
    ```
-   Aplikasi akan berjalan di `http://localhost:4321`.
+   App will launch at `http://localhost:4321`.
 
-4. **Build untuk Produksi**:
+4. **Build & Preview**:
    ```bash
    npm run build
-   ```
-   Hasil build akan berada di folder `dist/`.
-
-5. **Preview Build**:
-   ```bash
    npm run preview
    ```
 
 ---
 
-## 📱 Cara Instal di Mobile
-
-### **Android (Chrome)**
-1. Buka URL aplikasi di Chrome.
-2. Tunggu popup **"Instal Sekarang"** muncul di bawah layar, atau:
-3. Tap ikon titik tiga (menu) di pojok kanan atas.
-4. Pilih **"Instal Aplikasi"** atau **"Tambahkan ke Layar Utama"**.
-
-### **iOS (Safari)**
-1. Buka URL aplikasi di Safari.
-2. Tap ikon **Share** (kotak dengan panah ke atas) di bagian bawah.
-3. Scroll ke bawah dan pilih **"Add to Home Screen"** (Tambah ke Layar Utama).
-4. Tap **"Add"** di pojok kanan atas.
-
----
-
-## 📂 Struktur Proyek
+## 📂 Project Structure
 
 ```text
 ├── src/
-│   ├── components/       # Komponen UI (Modal, InstallPrompt, dll)
-│   ├── layouts/          # Template layout utama (Mobile Frame)
-│   ├── pages/            # Halaman aplikasi (Dashboard, Add, Badges)
-│   ├── styles/           # Konfigurasi CSS global & Tema
-│   └── utils/            # Logika storage dan gamifikasi
-├── public/               # Aset statis (Favicon, Badges SVG)
-├── astro.config.mjs      # Konfigurasi PWA & Astro
-└── PRD.md                # Dokumen kebutuhan produk awal
+│   ├── components/       # UI Components (CelebrationModal, InstallPrompt)
+│   ├── layouts/          # Layout template (Mobile-First Frame)
+│   ├── pages/            # App Routes (Dashboard, Add Phrase, Badges)
+│   ├── styles/           # Global styles & CSS tokens
+│   └── utils/            # Storage, Streak logic & OpenRouter AI Sync
+├── public/               # Static assets & SVG icons
+├── .env.example          # Environment blueprint
+└── astro.config.mjs      # Astro & PWA configuration
 ```
-
----
-
-## ⚙️ Konfigurasi Penting
-
-- **PWA Manifest**: Diatur di `astro.config.mjs` untuk mengatur warna tema (`#10B981`), ikon, dan `start_url`.
-- **View Transitions**: Diaktifkan di `src/layouts/Layout.astro` menggunakan `<ClientRouter />`.
-- **Storage Events**: Menggunakan CustomEvent `vocab-forge-change` di `src/utils/storage.js` untuk sinkronisasi state global.
-
----
-
-Dibangun dengan ❤️ untuk para penempa kata. Selamat belajar! 🔨🔥
